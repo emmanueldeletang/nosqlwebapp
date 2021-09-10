@@ -1,0 +1,57 @@
+<html>
+	<head>
+	  <title>Restautant GEMINA order</title>
+		<!-- href="/static/assets/style.css"-->
+		<link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='assets/style.css')}}" >
+		<link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='assets/emoji.css')}}" >
+		<script src="{{ url_for('static',filename='assets/twemoji.min.js')}}"></script>  
+		<script src="{{ url_for('static',filename='assets/emoji.js')}}"></script>
+	</head>
+<body>
+	<h1>{{email}}</h1>
+	<div class="intro">
+                <h2 class="text-center">Welcome {{email}} &nbsp;</h2>
+                <p class="text-center">This is your order </p>
+    </div>
+
+
+
+  </nav>
+    </div>
+   	<hr>
+	{% if det[0] %}
+	<div span="right">
+	</div>
+	<b><big>order </big></b>
+
+        <table align='center'>
+	 {% for de in det %}
+		<tr  class="datas">
+			<td class="type">date last order :   {{ de["lastorder"] }}</td>
+			<td class="name"> total spend {{ de["totalspend"] }}</td>
+			<td class="price">nb of command {{ de["nborder"] }}</td>
+		</tr>
+	{% endfor %}
+	</table>
+	{% else %}
+		<h4>No orders!!</h4>
+	{% endif %}
+	<hr/>
+	
+	
+	    <div class="login-clean">
+        
+        <form method="post" action="/fraud">
+            <h2 class="sr-only">go to fraud detection</h2>
+                <div class="form-group"><input class="form-control" type="text" name="IP" placeholder="IP"></div>
+               <div class="form-group">
+             <input type="submit" name="submit" value="fraud" class="btn btn-primary btn-block" style="background-color:#aedc8a;color:rgb(40,140,38);">
+            </div>
+           
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/js/lightbox.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<html>
+	<head>
+	  <title>Restautant GEMINA fraud</title>
+		<!-- href="/static/assets/style.css"-->
+		<link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='assets/style.css')}}" >
+		<link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='assets/emoji.css')}}" >
+		<script src="{{ url_for('static',filename='assets/twemoji.min.js')}}"></script>  
+		<script src="{{ url_for('static',filename='assets/emoji.js')}}"></script>
+	</head>
+<body>
+	<h1>{{email}}</h1>
+	<div class="intro">
+                <h2 class="text-center">Welcome {{email}} &nbsp;</h2>
+                <p class="text-center">fraud base on {{ip}} </p>
+    </div>
+
+  
+
+  </nav>
+    </div>
+   	<hr>
+    
+        fraud detection with IP  :   {{ ip  }} 
+        
+   
+   	
+    <table align='center'>
+	 	<tr  class="datas">
+			<td class="type">fraud detection with IP  :   {{ ip  }} has been use by all the follwinf user {{sup}} overlapping users</td>
+		
+		</tr>
+	<table>
+		
+	<table align='center'>
+	 	<tr  class="datas">
+			<td class="type">fraud detection for user   :   {{ email  }} has been use in the following city :  {{cit}} </td>
+		
+		</tr>
+	<table>
+
+	<hr/>
+	 <div class="login-clean">
+        
+        <form method="post" action="/cache">
+            <h2 class="sr-only">go to cache</h2>
+               <div class="form-group">
+             <input type="submit" name="submit" value="cache" class="btn btn-primary btn-block" style="background-color:#aedc8a;color:rgb(40,140,38);">
+            </div>
+           
+        </form>
+    </div>
+	
+	
+	
+</body>
+</html>
