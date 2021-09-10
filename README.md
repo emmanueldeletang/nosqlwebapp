@@ -56,15 +56,27 @@ or download and extract the repository .zip file.
 
 ### Step 2:  install the pre-requisite python library 
 
-install all the component need 
-   A cloud 9 environement to interact ( or you can install all in an EC2 ) 
+
+Setup your AWS credentials in the cloud9 or EC2 shell using 
+  AWS configure  https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html
+
+- You will need to install dependencies using pip as follows:
+install 
+  Gremlins , pymongo , redis , boto3  
+  
+ you can use the following command : 
+```Shell
+$ python -m pip install - r requirement.txt 
+
+```
 >     A AWS Dynamodb table  
->     A AWS DocumentDB table 
->     A AWS Neptune cluster 
->     A elastic cache Redis cluster 
->     A s3 to store the image load in the web site 
-
-
+```Shell
+python dynamoDB_create_table.py 
+```
+>     A AWS DocumentDB cluster https://docs.aws.amazon.com/documentdb/latest/developerguide/get-started-guide.html#cloud9-cluster
+>     A AWS Neptune cluster https://docs.aws.amazon.com/neptune/latest/userguide/get-started-create-cluster.html
+>     A elastic cache Redis cluster https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/GettingStarted.CreateCluster.html
+>     A s3 to store the image load in the web site  https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html
 
 Setup your AWS credentials in the cloud9 or EC2 shell using 
   AWS configure 
@@ -89,6 +101,8 @@ $ export clusterendpoint=XXXXX.docdb.amazonaws.com:27017
 
 
 ```
+
+load some information in menu collection a sample is here you can load 
 
 
 
