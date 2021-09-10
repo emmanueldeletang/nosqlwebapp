@@ -11,30 +11,43 @@ description: "This sample demonstrates a Python application that will manage res
 
 ## About this sample
 
-> This sample is based on a real 
-
+> This sample is a web site using different technologies to resolve different use case when you build a web application using different AWS services 
+    
 ### Overview
 
-This sample demonstrates a Python application that will 
+This sample demonstrates a Python application with FLASK ( this is a sample , you can make in other langage the same no problem ) 
 
+This sample is a web site using different technologies to resolve different use case when you build a web application 
+    Having an authentification module ( register , login management ... ) 
+    Purpose menu/ Product to select ( with admin part and user part ) 
+    Store all the orders ( base on command by user , make simple stat ( number of order , amount spend ... ) 
+    Having a fraud suspicious detection ( having the possiblity to detect a fraud , load the order  in bussiness logic different ) 
+    Accelerate you web page with caching ( the product or menu are ofter load so how to optimize this 
+
+WELCOME to Gemina trattoria  ( why gemina , this was the name of by Granf mother who teach me how to cook , and she was an incredible mediteranean grand mother with all the advantage you can imagine for his grandchildren) 
 
 
 ## How to run this sample
 
 To run this sample, you'll need:
 
-> - [Python 2.7+](https://www.python.org/downloads/release/python-2713/) or [Python 3+](https://www.python.org/downloads/release/python-364/)
+> [Python 3+](https://www.python.org/downloads/release/python-364/)
 
-> - An AWS DocumentDB account 
-> - A cloud 9 to load the data ....  
-
+> - An AWS account where you will create 
+>     A cloud 9 environement to interact ( or you can install all in an EC2 ) 
+>     A AWS Dynamodb table 
+>     A AWS DocumentDB table 
+>     A AWS Neptune cluster 
+>     A elastic cache Redis cluster 
+>     A s3 to store the image load in the web site 
+> 
 
 ### Step 1:  Clone or download this repository
 
 From your shell or command line:
 
 ```Shell
-git clone xxxxxxxxxxxx
+git clone https://github.com/emmanueldeletang/nosqlwebapp/
 ```
 
 or download and extract the repository .zip file.
@@ -43,13 +56,41 @@ or download and extract the repository .zip file.
 
 ### Step 2:  install the pre-requisite python library 
 
+install all the component need 
+   A cloud 9 environement to interact ( or you can install all in an EC2 ) 
+>     A AWS Dynamodb table  
+>     A AWS DocumentDB table 
+>     A AWS Neptune cluster 
+>     A elastic cache Redis cluster 
+>     A s3 to store the image load in the web site 
+
+
+
+Setup your AWS credentials in the cloud9 or EC2 shell using 
+  AWS configure 
 
 - You will need to install dependencies using pip as follows:
+install 
+  Gremlins , pymongo , redis , boto3  
+  
+ you can use the following command : 
 ```Shell
-$ python -m pip install xxxx
-$ Python -m pip install xxxx
+$ python -m pip install - r requirement.txt 
 
 ```
+
+In the shell configure all the global information ( your neptune enpoint , password document .... ) 
+```Shell
+$ export NEPTUNE_ENDPOINT=XXXXXXXXX.neptune.amazonaws.com
+$ export password=XXXXX
+$ export  rediscluster=XXXXXXX.cache.amazonaws.com
+$ export username=XXXXX
+$ export clusterendpoint=XXXXX.docdb.amazonaws.com:27017
+
+
+```
+
+
 
 change the db name , the key and endpoint of your cosmosdb . 
 ### Step 3:  Run the application  
@@ -57,11 +98,9 @@ change the db name , the key and endpoint of your cosmosdb .
 Run ..... 
 
 ```Shell
-$ python xxxx
+$ python app.py 
 
-$ python xxxx
 
-```
 
 
 in addition a word with more information will arrive in the future 
