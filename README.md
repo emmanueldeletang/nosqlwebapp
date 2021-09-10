@@ -73,6 +73,7 @@ $ python -m pip install - r requirement.txt
 ```Shell
 python dynamoDB_create_table.py 
 ```
+
 >     A AWS DocumentDB cluster https://docs.aws.amazon.com/documentdb/latest/developerguide/get-started-guide.html#cloud9-cluster
 >     A AWS Neptune cluster https://docs.aws.amazon.com/neptune/latest/userguide/get-started-create-cluster.html
 >     A elastic cache Redis cluster https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/GettingStarted.CreateCluster.html
@@ -102,11 +103,10 @@ $ export clusterendpoint=XXXXX.docdb.amazonaws.com:27017
 
 ```
 
-load some information in menu collection a sample is here you can load 
+load some information in menu collection a sample is here you can load menu.json file , this is a sample to load in your menu , but you can load what you want , just check the url of image of course and use your own S3 . 
 
 
 
-change the db name , the key and endpoint of your cosmosdb . 
 ### Step 3:  Run the application  
 
 Run ..... 
@@ -114,9 +114,13 @@ Run .....
 ```Shell
 $ python app.py 
 
+--- 
+
+this will launch a http web site on the url of you EC2 or cloug 9  
+
+a sample of application can be accessible on the following address http://ec2-35-180-230-131.eu-west-3.compute.amazonaws.com:8080/
 
 
-
-in addition a word with more information will arrive in the future 
+ more information will arrive in the future 
 
 
