@@ -74,10 +74,10 @@ $ python -m pip install - r requirement.txt
 python dynamoDB_create_table.py 
 ```
 
-    A AWS DocumentDB cluster https://docs.aws.amazon.com/documentdb/latest/developerguide/get-started-guide.html#cloud9-cluster
-    A AWS Neptune cluster https://docs.aws.amazon.com/neptune/latest/userguide/get-started-create-cluster.html
-    A elastic cache Redis cluster https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/GettingStarted.CreateCluster.html
-    A s3 to store the image load in the web site  https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html
+A AWS DocumentDB cluster https://docs.aws.amazon.com/documentdb/latest/developerguide/get-started-guide.html#cloud9-cluster
+A AWS Neptune cluster https://docs.aws.amazon.com/neptune/latest/userguide/get-started-create-cluster.html
+A elastic cache Redis cluster https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/GettingStarted.CreateCluster.html
+A s3 to store the image load in the web site  https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html
 
 Setup your AWS credentials in the cloud9 or EC2 shell using 
   AWS configure 
