@@ -114,14 +114,14 @@ load some information in menu collection a sample is here you can load menu.json
 
 ### Step 3:  Run the application  
 
-Run ..... 
+Run the application by launch Flask app in the app.py , of course you can change the port and other in the code ....
 
 ```Shell
 $ python app.py 
-
 --- 
 
-this will launch a http web site on the url of you EC2 or cloug 9  
+
+This will launch a http web site on the url of you EC2 or cloug 9  
 
 a sample of application can be accessible on the following address http://ec2-35-180-230-131.eu-west-3.compute.amazonaws.com:8080/
 
