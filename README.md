@@ -66,10 +66,10 @@ install
   
  you can use the following command : 
 ```Shell
-$ python -m pip install - r requirement.txt 
-
+$ python -m pip install -r requirement.txt 
 ```
->     A AWS Dynamodb table  
+A AWS Dynamodb table  
+
 ```Shell
 python dynamoDB_create_table.py 
 ```
@@ -84,7 +84,9 @@ A s3 to store the image load in the web site  https://docs.aws.amazon.com/Amazon
 
 
 Setup your AWS credentials in the cloud9 or EC2 shell using 
-  AWS configure 
+```Shell
+AWS configure 
+```
 
 - You will need to install dependencies using pip as follows:
 install 
@@ -92,18 +94,17 @@ install
   
  you can use the following command : 
 ```Shell
-$ python -m pip install - r requirement.txt 
-
+$ python -m pip install -r requirement.txt 
 ```
 
 In the shell configure all the global information ( your neptune enpoint , password document .... ) 
+
 ```Shell
 $ export NEPTUNE_ENDPOINT=XXXXXXXXX.neptune.amazonaws.com
 $ export password=XXXXX
 $ export  rediscluster=XXXXXXX.cache.amazonaws.com
 $ export username=XXXXX
 $ export clusterendpoint=XXXXX.docdb.amazonaws.com:27017
-
 
 ```
 
