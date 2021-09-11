@@ -117,9 +117,8 @@ load some information in menu collection a sample is here you can load menu.json
 Run the application by launch Flask app in the app.py , of course you can change the port and other in the code ....
 
 ```Shell
-$ python app.py 
---- 
-
+$ Python app.py 
+```
 
 This will launch a http web site on the url of you EC2 or cloug 9  
 
