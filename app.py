@@ -2,24 +2,38 @@
 """
 @author: ede
 """
+from multiprocessing.connection import Client
+from telnetlib import IP
+from typing import Container
 from flask import Flask, render_template,request,redirect,url_for # For flask implementation
 from bson import ObjectId # For ObjectId to work
-from pymongo import MongoClient
+import pymongo 
 import json 
 import os,sys
-import boto3
-from datetime import datetime
 import random
 from gremlin_python.process.anonymous_traversal import traversal
 from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
 from gremlin_python.structure.graph import Graph
 from gremlin_python.process.graph_traversal import __
+import gremlin_python.driver
+from gremlin_python.driver import client, serializer
 from gremlin_python import statics
 from flask import jsonify
 import random
-import redis
 from bson.json_util import dumps
-from rediscluster import RedisCluster
+import uuid
+import azure.cosmos.documents as documents
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.exceptions as exceptions
+from azure.cosmos.partition_key import PartitionKey
+import config
+import datetime
+import socket    
+
+
+now = datetime.datetime.now()
+
+
 
 
 statics.load_statics(globals())
@@ -31,45 +45,40 @@ statics.load_statics(globals())
 
 app = Flask(__name__)
 
-dynamodb = boto3.resource('dynamodb')
-username = os.environ.get("username")
-password = os.environ.get("password")
-clusterendpoint = os.environ.get("clusterendpoint")
-redishost = os.environ.get("rediscluster")
+HOST = config.settings['host']
+MASTER_KEY = config.settings['master_key']
+DATABASE_ID = config.settings['database_id']
+CONTAINER_ID = config.settings['container_id']
+gremlinuri = config.settings['gremlinsuri']
 
-#emdelredis.0hokrt.ng.0001.euw3.cache.amazonaws.com
+  
+
+clientg =  client.Client(gremlinuri , 'g',
+                           username=config.settings['gremlinsdb'],
+                           password=config.settings['gremlinskey'],
+                           message_serializer=serializer.GraphSONSerializersV2d0()
+                           )
 
 
+clients = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY}, user_agent="CosmosDBPythonQuickstart", user_agent_overwrite=True)
+db = clients.get_database_client(DATABASE_ID)
+container = db.get_container_client(CONTAINER_ID)
 
-redisClient = redis.StrictRedis(host=redishost, port=6379, db=0 )
+uriconnect =   config.settings['uriconnect']
+client = pymongo.MongoClient(uriconnect)
 
-client = MongoClient(clusterendpoint, username=username, password=password, ssl='true', ssl_ca_certs='rds-combined-ca-bundle.pem',retryWrites='false')
+print(uriconnect)
+
 db = client.restaurant  #Select the database
 cmenu = db.menu #Select the collection name
 od = db.orders
 
 
-#dynamodb = boto3.resource('dynamodb',
-#                    aws_access_key_id=keys.ACCESS_KEY_ID,
-#                    aws_secret_access_key=keys.ACCESS_SECRET_KEY,
-#                    aws_session_token=keys.AWS_SESSION_TOKEN)
-
-
-from boto3.dynamodb.conditions import Key, Attr
 
 email = "t@gmail.com"
 
 
 
-# put in cache the menu 
-def cacheredis(): 
-    database = client.restaurant #database name in mongodb
-    menu = database.menu.find({"active" : True}) #collection name database
-    serializedObj = dumps(menu) #serialize object for the set redis.
-    result = redisClient.set('menu', serializedObj) #set serialized object to redis server.
-    parsedUserList = redisClient.get('menu')
-
-  
 
 @app.route('/')
 def index():
@@ -108,17 +117,21 @@ def signup():
         password = request.form['password']
         city = request.form['city']
      #   country = request.form['country']
-        table = dynamodb.Table('userdata')
-        
-        table.put_item(
-                Item={
+         
+        Item={
+        'id' : str(uuid.uuid4()),
         'name': name,
         'email': email,
         'password': password,
         'city': city #,
     #    'country':country
             }
-        )
+ 
+       
+     
+        container.upsert_item(body=Item)
+        
+    
         msg = "Welcome to Restaurant GEMINA Registration Complete. Please Login to your account !"
     
         return render_template('login.html',msg = msg)
@@ -128,6 +141,18 @@ def signup():
 def login():    
     return render_template('login.html')
 
+def query_items(container, email):
+   
+  
+    # Including the partition key value of account_number in the WHERE filter results in a more efficient query
+    items = list(container.query_items(
+        query="SELECT * FROM r WHERE r.email=@email",
+        parameters=[
+            { "name":"@email", "value":email }
+        ]
+    ))
+    print(items)
+    return items
 
 @app.route('/check',methods = ['post'])
 def check():
@@ -136,12 +161,16 @@ def check():
         email = request.form['email']
         password = request.form['password']
         
-        table = dynamodb.Table('userdata')
-        response = table.query(
-                KeyConditionExpression=Key('email').eq(email)
-        )
-        items = response['Items']
+        print (email)
+        items = list(container.query_items(
+        query="SELECT * FROM r WHERE r.email=@email",
+        parameters=[
+            { "name":"@email", "value":email }
+        ]
+         ))
+               
         name = items[0]['name']
+        print(items[0]['password'])
 
         if password == items[0]['password']:
             
@@ -160,12 +189,11 @@ def check():
 @app.route('/home',methods=["POST","GET"])
 def home():
     if request.method=='POST':
-       command = request.form.getlist("mycheck")
-
-       querycommand = {"name": {"$in": command}}
        
+       command = request.form.getlist("mycheck")
+       querycommand = {"name": {"$in": command}}
        me = cmenu.find(querycommand)
-       now = datetime.now()
+       now = datetime.datetime.now()
        nborder = 0
        totalspend = 0
 
@@ -189,8 +217,17 @@ def home():
                      )
       
 
-       ip =  request.environ.get('HTTP_X_REAL_IP', request.remote_addr) 
-       foo = ['Paris', 'Bordeaux', 'Lyon', 'Valence', 'Clermont','Tunis']
+       
+       hostname = socket.gethostname()    
+       IPAddr = socket.gethostbyname(hostname)    
+       print("Your Computer Name is:" + hostname)    
+       print("Your Computer IP Address is:" + IPAddr)
+       ip = IPAddr
+
+
+
+
+       foo = ['Paris', 'Bordeaux', 'Lyon', 'Toulouse', 'Clermont','Tunis','Bruxelles','Doha']
        city = random.choice(foo)
        
      
@@ -207,8 +244,18 @@ def home():
 
        
        det = od.find({"email": email})
-       load_neptune(email, ip,city)
-       return render_template("order.html", email = email, det = det)
+
+       try :
+         
+         load_neptune(email, ip,city)
+         re = executeGremlinQuery("g.V().has('label','IPAddress').limit(10)")
+
+       except :
+            pass 
+    
+ 
+       print(re)
+       return render_template("order.html", email = email, det = det, re = re)
 
     
 
@@ -217,35 +264,56 @@ def home():
   
   
 
+cosmosdb_messages = {
+    409: 'Conflict exception. You\'re probably inserting the same ID again.',
+    429: 'Not enough RUs for this query. Try again.'
+}
+
+def executeGremlinQuery(gremlinQuery, message=None, params=None):
+    try: 
+        callback = clientg.submitAsync(gremlinQuery)
+        if callback.result() is not None:
+            return callback.result().one()
+    except GremlinServerError as ex:
+        status=ex.status_attributes['x-ms-status-code']
+        print('There was an exception: {0}'.format(status))
+        print(cosmosdb_messages[status])
     
 def load_neptune(email,ip,city):
     
-   
     
-    endpoint = os.environ["NEPTUNE_ENDPOINT"]
-    g = traversal().withRemote(
-    DriverRemoteConnection(f"wss://{endpoint}:8182/gremlin", "g")
-    )
-    
-   
+
+    print ("gremlins commande")
+
+    cmdemail = "g.addV('User').property('id','"+email+"').property('part','"+email+"').property('username', '"+email+"')"
+
+
     try :
-        g.addV('User').property(id,email).property('username', email).next()
+       executeGremlinQuery( cmdemail)
     except :
        pass 
     try :
-        g.addV('city').property(id,city).property('cityname', city).next()
+       cmdcity = "g.addV('city').property('id','"+city+"').property('part','"+city+"').property('cityname', '"+city+"')"
+      
+       executeGremlinQuery( cmdcity)
     except :
        pass 
     try :
-        g.addV('IPAddress').property(id, ip).property('address', ip).next()
+       cmdip = "g.addV('IPAddress').property('id','"+ip+"').property('part','"+ip+"').property('cityname', '"+ip+"')"
+       print (cmdip)
+       executeGremlinQuery( cmdip)
     except :
        pass 
     try :
-        g.V(ip).addE('Used').to(__.V(email)).property('use',ip).next()
+        cmdused = "g.V('"+ip+"').addE('Used').to(__.V('"+email+"')).property('use','"+ip+"')"
+        print (cmdused)
+        executeGremlinQuery( cmdused)
     except :
         pass 
     try :
-        g.V(email).addE('lived').to(__.V(city)).property('live',city).next()
+       cmdlived = "g.V('"+email+"').addE('lived').to(__.V('"+city+"')).property('live','"+ip+"')"
+       print (cmdlived)
+       executeGremlinQuery( cmdlived)
     except :
         pass 
     
@@ -266,54 +334,46 @@ def order():
 def fraud():
     if request.method=='POST':
        ip = request.form["IP"]   
-      
-       endpoint = os.environ["NEPTUNE_ENDPOINT"]
-       g = traversal().withRemote(
-       DriverRemoteConnection(f"wss://{endpoint}:8182/gremlin", "g")
-       )
-    
-       sup = g.V(ip).flatMap(outE('Used').inV()).path().by(valueMap('username')).toList()
-       sup = [[i for i in nested if i != 'path[{}'] for nested in sup]
+       supcmd= "g.V('"+ip+"').flatMap(outE('Used').inV()).dedup().path().by(valueMap('username'))"
+       print (supcmd)
        
-       new_k = []
-       for elem in sup:
-          if elem not in new_k:
-           new_k.append(elem)
-       sup = new_k
-       sup = [i[1:] for i in sup]
-
+       supRES = executeGremlinQuery( supcmd)
+       print(supRES)
+       sup = ''
+       for su in supRES :
+            for s in (su["objects"]):
+                if len(s) == 1 :
+                    sup = sup + str(s)
        
-       cit = g.V(email).flatMap(outE('lived').inV()).path().by(valueMap('cityname')).toList()
-       cit =   [[i for i in nested if i != 'path[{}'] for nested in cit]
-       new = []
-       for elem in cit:
-          if elem not in new:
-           new.append(elem)
-       cit = new
-       cit = [i[1:] for i in cit]
-
+       citres = executeGremlinQuery( "g.V('"+email+"').flatMap(outE('lived').inV()).dedup().path().by(valueMap('cityname'))")
+       print (citres)
+       cit = ''
+       for ci in citres :
+            for s in (ci["objects"]):
+                if len(s) == 1 :
+                    cit = cit + str(s)
        
-    
-       
+   
+                    
  
 
-    cacheredis()
+    # cacheredis()
     return render_template("fraud.html", email = email, ip = ip ,  sup = sup , cit = cit)
 
-
-@app.route('/cache', methods=['POST'])
-def cache():
+#
+#@app.route('/cache', methods=['POST'])
+#def cache():
     
-    if request.method=='POST':
-        time1 = datetime.now()
-        List = redisClient.get('menu')
-        time2= datetime.now()
-        t = time2 - time1
-        parsedUserList = json.loads(List)
+ #   if request.method=='POST':
+ #       time1 = datetime.now()
+ #       List = redisClient.get('menu')
+ #       time2= datetime.now()
+ #       t = time2 - time1
+  #      parsedUserList = json.loads(List)
         
 
         
-    return render_template("cache.html", email = email,  menus = parsedUserList ,t=t)
+  #  return render_template("cache.html", email = email,  menus = parsedUserList ,t=t)
     
 
     
