@@ -28,44 +28,45 @@
 	<div span="right">
 	</div>
 	<b><big>Menu </big></b>
-	 <form method="post" action="/manage">
+	<form method="post" action="/manage">
 
-        <table align='center'>
-	    <tr id="row">
-	    	<th class="id">id</th>
-	    	<th class="type">type</th>
-	    	<th class="name">Name</th>
-	    	<th class="price">Price</th>
-	    	<th class="description">Description</th>
-	    	<th class="activate">active</th>
-	    	<th class="image">image</th>
-            <th class="order">action</th>
-            
-	    </tr>
-	{% for menu in menus %}
-		<tr  class="datas">
-			<td class="type">{{ menu["id"] }}</td>
-			<td class="type">{{ menu["type"] }}</td>
-			<td class="name">{{ menu["name"] }}</td>
-			<td class="price">{{ menu["price"] }}</td>
-			<td class="description">{{menu["description"] }}</td>
-			<td class="activate" >{{menu["active"] }}</td>
-			<td ><img width=50  height = 50 src={{menu["image"] }} href = {{menu["image"] }} > </img> </td>
-            <td> <input type="checkbox" value={{ menu["id"] }} name="mycheck" >     </td>
-		</tr>
-	{% endfor %}
+		<table align='center'>
+			<tr id="row">
+				<th class="id">id</th>
+				<th class="type">type</th>
+				<th class="name">Name</th>
+				<th class="price">Price</th>
+				<th class="description">Description</th>
+				<th class="activate">active</th>
+				<th class="image">image</th>
+				<th class="order">action</th>
 
-	</table>
-	{% else %}
+			</tr>
+			{% for menu in menus %}
+			<tr class="datas">
+				<td class="type">{{ menu["id"] }}</td>
+				<td class="type">{{ menu["type"] }}</td>
+				<td class="name">{{ menu["name"] }}</td>
+				<td class="price">{{ menu["price"] }}</td>
+				<td class="description">{{menu["description"] }}</td>
+				<td class="activate">{{menu["active"] }}</td>
+				<td><img width=50 height=50 src={{menu["image"] }} href={{menu["image"] }}> </img> </td>
+				<td> <input type="checkbox" value={{ menu["id"] }} name="mycheck">     </td>
+			</tr>
+			{% endfor %}
+
+		</table>
+		{% else %}
 		<h4>NO menu </h4>
-	{% endif %}
-	<hr/>
-	
+		{% endif %}
+		<hr />
 
 
-   <div class="illustration"><i class="icon ion-ios-navigate" style="color:#aedc8a;"></i></div>
-    <input type="submit" name="submit" value="Order" class="btn btn-primary btn-block" style="background-color:#aedc8a;color:rgb(40,140,38);">
-	</form>
+
+		<div class="illustration"><i class="icon ion-ios-navigate" style="color:#aedc8a;"></i></div>
+		<input type="submit" name="submit" value="Order" class="btn btn-primary btn-block" style="background-color:#aedc8a;color:rgb(40,140,38);">
+		<a href="/login"  style="text-align:center" > You already have an account? Login here.</a>
+		</form>
  
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>

@@ -3,13 +3,12 @@
 @author: ede
 """
 from multiprocessing.connection import Client
+from pickle import LIST
 from telnetlib import IP
 from typing import Container
 from flask import Flask, render_template,request,redirect,url_for # For flask implementation
 from bson import ObjectId # For ObjectId to work
 import pymongo 
-import json 
-import os,sys
 import random
 from gremlin_python.process.anonymous_traversal import traversal
 from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
@@ -29,18 +28,11 @@ from azure.cosmos.partition_key import PartitionKey
 import config
 import datetime
 import socket    
-
+import requests 
 
 now = datetime.datetime.now()
 
-
-
-
 statics.load_statics(globals())
-
-
-
-# datetime object containing current date and time
 
 
 app = Flask(__name__)
@@ -50,6 +42,10 @@ MASTER_KEY = config.settings['master_key']
 DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = config.settings['container_id']
 gremlinuri = config.settings['gremlinsuri']
+
+key = config.settings['KEY']
+endpoint = config.settings['ENDPOINT']
+region = config.settings['LOCATION']
 
   
 
@@ -78,6 +74,55 @@ od = db.orders
 email = "t@gmail.com"
 
 
+def detect_language(text, key, region, endpoint):
+    # Use the Translator detect function
+    path = "/detect"
+    url = endpoint + path
+    # Build the request
+    params = {
+        "api-version": "3.0"
+    }
+    headers = {
+    "Ocp-Apim-Subscription-Key": key,
+    "Ocp-Apim-Subscription-Region": region,
+    "Content-type": "application/json"
+    }
+    body = [{
+        "text": text
+    }]
+    # Send the request and get response
+    request = requests.post(url, params=params, headers=headers, json=body)
+    response = request.json()
+    # Get language
+    language = response[0]["language"]
+    # Return the language
+    return language
+
+
+def translate(text, source_language, target_language, key, region, endpoint):
+    # Use the Translator translate function
+    url = endpoint + "/translate"
+    # Build the request
+    params = {
+        "api-version": "3.0",
+        "from": source_language,
+        "to": target_language
+    }
+    headers = {
+        "Ocp-Apim-Subscription-Key": key,
+        "Ocp-Apim-Subscription-Region": region,
+        "Content-type": "application/json"
+    }
+    body = [{
+        "text": text
+    }]
+    # Send the request and get response
+    request = requests.post(url, params=params, headers=headers, json=body)
+    response = request.json()
+    # Get translation
+    translation = response[0]["translations"][0]["text"]
+    # Return the translation
+    return translation
 
 
 @app.route('/')
@@ -117,17 +162,32 @@ def signup():
         password = request.form['password']
         city = request.form['city']
      #   country = request.form['country']
-         
-        Item={
-        'id' : str(uuid.uuid4()),
-        'name': name,
-        'email': email,
-        'password': password,
-        'city': city #,
+     
+        user = query_items(email)
+     
+
+        id 
+
+        if user :
+            Item={
+             'id' : user[0]['id'],
+             'name': name,
+             'email': email,
+             'password': password,
+             'city': city #,
+          #    'country':country
+            }
+        else :
+          Item={
+            'id' : str(uuid.uuid4()),
+            'name': name,
+            'email': email,
+            'password': password,
+            'city': city #,
     #    'country':country
             }
- 
-       
+   
+              
      
         container.upsert_item(body=Item)
         
@@ -141,7 +201,7 @@ def signup():
 def login():    
     return render_template('login.html')
 
-def query_items(container, email):
+def query_items(email):
    
   
     # Including the partition key value of account_number in the WHERE filter results in a more efficient query
@@ -160,30 +220,44 @@ def check():
         global email
         email = request.form['email']
         password = request.form['password']
+        language = request.form['language']
         
-        print (email)
-        items = list(container.query_items(
-        query="SELECT * FROM r WHERE r.email=@email",
-        parameters=[
+        print(email)
+
+        if email == 'admin@gmail.com': 
+           print("ici")
+           menu_l = cmenu.find().sort("type",-1)
+           return render_template("manage.html",menus = menu_l)
+           
+        else:
+            print("la")
+            items = list(container.query_items(
+            query="SELECT * FROM r WHERE r.email=@email",
+            parameters=[
             { "name":"@email", "value":email }
-        ]
-         ))
+            ]
+            ))
                
-        name = items[0]['name']
-        print(items[0]['password'])
+            name = items[0]['name']
+            print(items[0]['password'])
+            print(language)
 
-        if password == items[0]['password']:
+            if password == items[0]['password']:
             
-            menu_l = cmenu.find({"active" : True , "type":"starter"})
-            menu_m = cmenu.find({"active" : True , "type":"main"})
-            menu_d = cmenu.find({"active" : True , "type":"dessert"})
+                menu_l = list(cmenu.find({"active" : True }))
+ 
             
-            
-            
-         #    menu_l = client['restaurant']['menu'].aggregate([{'$match': {'active': True}}, {'$sort': {'type': -1}}])
-            return render_template("home.html",menus = menu_l,main = menu_m ,des = menu_d, email = email   )
+                for i in  menu_l : 
+                    text = i["description"]
+                    languagedetect = detect_language(text, key, region, endpoint)
+                    translated_text = translate(text, languagedetect, language, key, region, endpoint)
+                    i.update({"tra":translated_text})
 
-    menu_l = cmenu.find({"active": True} )
+           
+            #return render_template("home.html",menus = menu_l,main = menu_m ,des = menu_d, email = email   )
+                return render_template("home.html",menus = menu_l , email = email   )
+
+        menu_l = cmenu.find({"active": True} )
     return render_template("home.html",menus = menu_l, email = email)
 
 @app.route('/home',methods=["POST","GET"])
@@ -357,27 +431,10 @@ def fraud():
                     
  
 
-    # cacheredis()
     return render_template("fraud.html", email = email, ip = ip ,  sup = sup , cit = cit)
 
-#
-#@app.route('/cache', methods=['POST'])
-#def cache():
-    
- #   if request.method=='POST':
- #       time1 = datetime.now()
- #       List = redisClient.get('menu')
- #       time2= datetime.now()
- #       t = time2 - time1
-  #      parsedUserList = json.loads(List)
-        
 
-        
-  #  return render_template("cache.html", email = email,  menus = parsedUserList ,t=t)
-    
 
-    
-    
 
 if __name__ == "__main__":
     

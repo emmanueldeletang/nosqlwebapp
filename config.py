@@ -9,5 +9,8 @@ settings = {
     'gremlinsuri' : os.environ.get('gremlinsuri','wss://edeletangdemograph.gremlin.cosmos.azure.com:443/'),
     'gremlinskey': os.environ.get('gremlinskey', 'KNHPnGDC29RWiQZ6q4awz7B6fdWiVi7IBBWVlmeOWxzz210yJz5qii5uaAWRuZkZQb4L4P4et3ntD8esMrZWeQ=='),
     'gremlinsdb': os.environ.get('gremlinsdb', '/dbs/gemina/colls/restaurant'),
+    'KEY': os.environ.get('KEY', 'abac061bff2143ee9c559743cae832da'),
+    'ENDPOINT': os.environ.get( 'ENDPOINT','https://api.cognitive.microsofttranslator.com/'),
+    'LOCATION': os.environ.get('LOCATION','francecentral')
   
 }

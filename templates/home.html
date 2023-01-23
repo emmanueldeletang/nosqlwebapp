@@ -32,45 +32,27 @@
 	 <form method="post" action="/home">
 
         <table align='center'>
-	    <tr id="row">
-	    	<th class="type">type</th>
-	    	<th class="name">Name</th>
-	    	<th class="price">Price</th>
-	    	<th class="description">Description</th>
-	    	<th class="image">image</th>
-            <th class="order">image</th>
-	    </tr>
+			<tr id="row">
+				<th class="type">type</th>
+				<th class="name">Name</th>
+				<th class="price">Price</th>
+				<th class="description">Description</th>
+				<th class="traduction">translate</th>
+				<th class="image">image</th>
+				<th class="order">image</th>
+			</tr>
 	{% for menu in menus %}
-		<tr  class="datas">
-			<td class="type">{{ menu["type"] }}</td>
-			<td class="name">{{ menu["name"] }}</td>
-			<td class="price">{{ menu["price"] }}</td>
-			<td class="description">{{menu["description"] }}</td>
-			<td ><img width=50  height = 50 src={{menu["image"] }} href = {{menu["image"] }} > </img> </td>
-            <td> <input type="checkbox" value={{ menu["name"] }} name="mycheck" >     </td>
-		</tr>
+			<tr class="datas">
+				<td class="type">{{ menu["type"] }}</td>
+				<td class="name">{{ menu["name"] }}</td>
+				<td class="price">{{ menu["price"] }}</td>
+				<td class="description">{{menu["description"] }}</td>
+				<td class="traduction">{{menu["tra"] }}</td>
+				<td><img width=50 height=50 src={{menu["image"] }} href={{menu["image"] }}> </img> </td>
+				<td> <input type="checkbox" value={{ menu["name"] }} name="mycheck">     </td>
+			</tr>
 	{% endfor %}
-	{% for menu in main %}
-		<tr  class="datas">
-			<td class="type">{{ menu["type"] }}</td>
-			<td class="name">{{ menu["name"] }}</td>
-			<td class="price">{{ menu["price"] }}</td>
-			<td class="description">{{menu["description"] }}</td>
-			<td ><img width=50  height = 50 src={{menu["image"] }} href = {{menu["image"] }} > </img> </td>
-            <td> <input type="checkbox" value={{ menu["name"] }} name="mycheck" >     </td>
-		</tr>
-	{% endfor %}
-	{% for menu in des %}
-		<tr  class="datas">
-			<td class="type">{{ menu["type"] }}</td>
-			<td class="name">{{ menu["name"] }}</td>
-			<td class="price">{{ menu["price"] }}</td>
-			<td class="description">{{menu["description"] }}</td>
-			<td ><img width=50  height = 50 src={{menu["image"] }} href = {{menu["image"] }} > </img> </td>
-            <td> <input type="checkbox" value={{ menu["name"] }} name="mycheck" >     </td>
-		</tr>
-	{% endfor %}
-	
+		
 	</table>
 	{% else %}
 		<h4>NO menu </h4>
