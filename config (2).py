@@ -9,5 +9,8 @@ settings = {
     'gremlinsuri' : os.environ.get('gremlinsuri','wss://xxxxx.gremlin.cosmos.azure.com:443/'),
     'gremlinskey': os.environ.get('gremlinskey', 'xxxxxuaAWRuZkZQb4L4P4et3ntD8esMrZWeQ=='),
     'gremlinsdb': os.environ.get('gremlinsdb', '/dbs/gemina/colls/restaurant'),
+   '  KEY': os.environ.get('KEY', 'XXXX'),
+    'ENDPOINT': os.environ.get( 'ENDPOINT','https://api.cognitive.microsofttranslator.com/'),
+    'LOCATION': os.environ.get('LOCATION','francecentral')
   
 }
