@@ -209,7 +209,7 @@ def query_items(email):
         query="SELECT * FROM r WHERE r.email=@email",
         parameters=[
             { "name":"@email", "value":email }
-        ]
+        ],enableCrossPartitionQuery=True,
     ))
     print(items)
     return items
@@ -235,7 +235,7 @@ def check():
             query="SELECT * FROM r WHERE r.email=@email",
             parameters=[
             { "name":"@email", "value":email }
-            ]
+            ],enableCrossPartitionQuery = True,
             ))
                
             name = items[0]['name']

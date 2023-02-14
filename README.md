@@ -58,7 +58,7 @@ For the moment you need to create 3 Cosmsodb account ( of course this is for the
     one Mongo API 
     one Gremlins 
     one storage account to have the image 
-
+    one Transalator ressource to have automatic translation
     Setup all the connection string in config.py from your Gremlins , mongo api and cosmosdb API 
 
 if you want to load the menu you can use a mongoimport command from the menu.json sample in the directory 
