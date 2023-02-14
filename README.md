@@ -61,6 +61,8 @@ For the moment you need to create 3 Cosmsodb account ( of course this is for the
     one Transalator ressource to have automatic translation
     Setup all the connection string in config.py from your Gremlins , mongo api and cosmosdb API 
 
+    the partition key for cosmosdb nosql and mongo can be email , for gremlins Db the partition key is part 
+
 if you want to load the menu you can use a mongoimport command from the menu.json sample in the directory 
 You need to create a cosmosdb container in SQL api name User and with the partition key (email )
 
